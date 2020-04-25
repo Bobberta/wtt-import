@@ -1,9 +1,10 @@
-import { Button, Row, Col } from "antd";
+import { Button, Descriptions, Row, Col } from "antd";
 import { SpotifyApi } from "../types/spotify";
 import { DeezerApi } from "../types/deezer";
 import React, { useEffect, useState } from "react";
 import Player from "react-audio-player";
 
+import EditTrackModal from "./EditTrackModal";
 import { Line, Track } from "../types/types";
 import { spSearchTrack } from "../api/spotify";
 import { dzSearchTrack } from "../api/deezer";
@@ -36,10 +37,11 @@ const TrackStep: React.FC<TrackStepProps> = ({
     SpotifyApi.TrackObjectFull[]
   >([]);
   const [deezerTracks, setDeezerTracks] = useState([]);
-  const [previewUrl, setPreviewUrl] = useState<any>();
+  const [previewUrl, setPreviewUrl] = useState();
   const [selectedTrack, setSelectedTrack] = useState<
     Track | null | undefined
   >();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   useEffect(() => {
     setSelectedTrack(null);
     const search = async () => {
@@ -59,32 +61,52 @@ const TrackStep: React.FC<TrackStepProps> = ({
     const trackObject = getTrackFromDeezerTrackObject(track);
     setSelectedTrack(trackObject);
   };
+  const handleEditSelectedTrack = (track: Track) => {
+    setIsModalOpen(true);
+  };
   return (
     <div>
       <Player src={previewUrl} autoPlay controls />
-      <h2>
-        {csvLine.title} — {csvLine.artist}
-      </h2>
-      <Button onClick={goToPreviousLine} disabled={index <= 1}>
-        {"<- Précédent"}
-      </Button>
-      {!isLastLine ? (
-        <Button onClick={goToNextLine}>{"-> Suivant"}</Button>
-      ) : (
-        <Button onClick={endIntegration}>Terminer l'intégration</Button>
-      )}
+      <Row gutter={24}>
+        <Col span={6}>
+          <Button onClick={goToPreviousLine} disabled={index < 1}>
+            {"<- Précédent"}
+          </Button>
+        </Col>
+        <Col span={12}>
+          <h2>
+            {csvLine.title} — {csvLine.artist}
+          </h2>
+        </Col>
+        <Col span={6}>
+          {!isLastLine ? (
+            <Button onClick={goToNextLine}>{"-> Suivant"}</Button>
+          ) : (
+            <Button onClick={endIntegration}>Terminer l'intégration</Button>
+          )}
+        </Col>
+      </Row>
+
       {selectedTrack && (
-        <div>
-          <h3>Selected Track</h3>
-          <div>
-            <p>
-              {selectedTrack.artist} — {selectedTrack.title}
-            </p>
-            <Button onClick={() => addTrack(selectedTrack)}>
-              Ajouter à la playlist
-            </Button>
-          </div>
-        </div>
+        <>
+          <Descriptions title="Morceau sélectionné">
+            <Descriptions.Item label="Titre">
+              {selectedTrack.title}
+            </Descriptions.Item>
+            <Descriptions.Item label="Artiste(s)">
+              {selectedTrack.artist}
+            </Descriptions.Item>
+            <Descriptions.Item label="Année de sortie">
+              {selectedTrack.year}
+            </Descriptions.Item>
+          </Descriptions>
+          <Button onClick={() => handleEditSelectedTrack(selectedTrack)}>
+            Modifier
+          </Button>
+          <Button type="primary" onClick={() => addTrack(selectedTrack)}>
+            Ajouter à la playlist
+          </Button>
+        </>
       )}
       <Row gutter={24}>
         <Col span={12}>
@@ -123,6 +145,14 @@ const TrackStep: React.FC<TrackStepProps> = ({
           })}
         </Col>
       </Row>
+      {selectedTrack && (
+        <EditTrackModal
+          track={selectedTrack}
+          visible={isModalOpen}
+          closeModal={() => setIsModalOpen(false)}
+          editTrack={(track: Track) => setSelectedTrack(track)}
+        />
+      )}
     </div>
   );
 };

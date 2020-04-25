@@ -8,24 +8,34 @@
     "@testing-library/user-event": "^7.1.2",
     "@types/jest": "^24.0.0",
     "@types/node": "^12.0.0",
+    "@types/papaparse": "^5.0.3",
     "@types/react": "^16.9.0",
+    "@types/react-audio-player": "^0.11.0",
     "@types/react-dom": "^16.9.0",
+    "antd": "^4.1.4",
+    "babel-plugin-import": "^1.13.0",
+    "customize-cra": "^0.9.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "node-fetch": "^2.6.0",
+    "papaparse": "^5.2.0",
     "react": "^16.13.1",
+    "react-app-rewired": "^2.1.5",
+    "react-audio-player": "^0.13.0",
     "react-dom": "^16.13.1",
+    "react-file-drop": "^3.0.6",
     "react-scripts": "3.4.1",
+    "styled-components": "^5.1.0",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "~3.7.2"
   },
   "scripts": {
     "start:server": "cd server && npx ts-node-dev --respawn --transpileOnly ./server.ts && wait-on tcp:5000",
-    "start:app": "react-scripts start",
+    "start:app": "react-app-rewired start",
     "start": "run-p --race start:server start:app",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "build": "react-app-rewired build",
+    "eject": "react-scripts eject",
+    "test": "react-app-rewired test"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -44,6 +54,8 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.6",
+    "@types/styled-components": "^5.1.0",
+    "@types/webpack-env": "^1.15.2",
     "npm-run-all": "^4.1.5",
     "wait-on": "^4.0.2"
   },

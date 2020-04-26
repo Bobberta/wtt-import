@@ -19,7 +19,7 @@ app.use(function (req, res, next) {
     "Access-Control-Allow-Methods",
     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
   );
-  res.setHeader("Access-Control-Allow-Credentials", true);
+  res.setHeader("Access-Control-Allow-Credentials", "true");
   next();
 });
 
@@ -71,11 +71,11 @@ app.get("/deezerTrack", async function (req, res) {
   const response = await fetch(
     `https://api.deezer.com/search?q=${req.query.q}`
   );
-  //   if (response.status !== 200) {
-  //     console.log("error");
-  //     res.status(404).send(response);
-  //     return;
-  //   }
+  if (response.status !== 200) {
+    console.log(response);
+    res.status(404).send(response);
+    return;
+  }
   const data = await response.json();
   res.status(200).json(data);
 });

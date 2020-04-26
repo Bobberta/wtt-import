@@ -7,7 +7,7 @@ export interface Track {
   title: string;
   artist: string;
   isrc?: string;
-  year: number;
+  year?: LoDashImplicitNumberArrayWrapper;
   deezerId?: string;
   spotifyId?: string;
   popularity?: number;

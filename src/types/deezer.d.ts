@@ -36,24 +36,24 @@ export declare namespace DeezerApi {
     title: string;
     title_short: string;
     title_version: string;
-    isrc: string;
+    isrc?: string;
     link: Url;
-    share: Url;
+    share?: Url;
     duration: number;
-    track_position: number;
-    disk_number: number;
+    track_position?: number;
+    disk_number?: number;
     rank: number;
-    release_date: string;
+    release_date?: string;
     explicit_lyrics: false;
     explicit_content_lyrics: number;
     explicit_content_cover: number;
     preview: string;
-    bpm: number;
-    gain: number;
-    available_countries: string[];
-    contributors: Artist[];
+    bpm?: number;
+    gain?: number;
+    available_countries?: string[];
+    contributors?: Artist[];
     artist: Artist;
     album: Album;
-    type: string;
+    type: "track";
   }
 }

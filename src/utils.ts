@@ -22,7 +22,7 @@ export const getTrackFromDeezerTrackObject = ({
     artist: artist.name,
     deezerId: id.toString(),
     isrc,
-    year: parseInt(release_date, 10),
+    year: release_date ? parseInt(release_date, 10) : undefined,
     title,
   };
   console.log(release_date);

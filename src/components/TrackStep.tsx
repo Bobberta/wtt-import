@@ -1,4 +1,4 @@
-import { Button, Descriptions, Row, Col, message } from "antd";
+import { Button, Descriptions, Row, Col, message, Space } from "antd";
 import { SpotifyApi } from "../types/spotify";
 import { DeezerApi } from "../types/deezer";
 import React, { useEffect, useState } from "react";
@@ -15,6 +15,7 @@ import {
 } from "../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../types/store";
+import { DeezerTrackListItem, SpotifyTrackListItem } from "./TrackListItem";
 
 interface TrackStepProps {
   lineAmount: number;
@@ -95,7 +96,7 @@ const TrackStep: React.FC<TrackStepProps> = ({
   };
 
   return (
-    <div>
+    <Space direction="vertical" size="large">
       <Player src={previewUrl ? previewUrl : ""} autoPlay controls />
       <Row gutter={24}>
         <Col span={6}>
@@ -149,22 +150,12 @@ const TrackStep: React.FC<TrackStepProps> = ({
           <h3>Spotify Tracks</h3>
           {spotifyTracks.map((track: SpotifyApi.TrackObjectFull, index) => {
             return (
-              <div key={index}>
-                {!track.preview_url && <p>[No URL]</p>}
-                {`${track.name} — ${convertArtistsArrayToString(
-                  track.artists
-                )} (${track.album.release_date || "?"})`}
-                {track.preview_url && (
-                  <>
-                    <Button onClick={() => play(track.preview_url)}>
-                      Play
-                    </Button>
-                    <Button onClick={() => selectSpotifyTrack(track)}>
-                      Sélectionner
-                    </Button>
-                  </>
-                )}
-              </div>
+              <SpotifyTrackListItem
+                track={track}
+                key={index}
+                play={play}
+                selectTrack={selectSpotifyTrack}
+              />
             );
           })}
         </Col>
@@ -173,20 +164,12 @@ const TrackStep: React.FC<TrackStepProps> = ({
 
           {deezerTracks.map((track: DeezerApi.TrackObject, index) => {
             return (
-              <div key={index}>
-                {!track.preview && "[No URL]"}
-                {`${track.title} — ${track.artist.name} (${
-                  track.release_date || "?"
-                })`}
-                {track.preview && (
-                  <>
-                    <Button onClick={() => play(track.preview)}>Play</Button>
-                    <Button onClick={() => selectDeezerTrack(track)}>
-                      Sélectionner
-                    </Button>
-                  </>
-                )}
-              </div>
+              <DeezerTrackListItem
+                track={track}
+                key={index}
+                play={play}
+                selectTrack={selectDeezerTrack}
+              />
             );
           })}
         </Col>
@@ -199,7 +182,7 @@ const TrackStep: React.FC<TrackStepProps> = ({
           editTrack={(track: Track) => setSelectedTrack(track)}
         />
       )}
-    </div>
+    </Space>
   );
 };
 

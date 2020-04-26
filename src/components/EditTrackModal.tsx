@@ -34,7 +34,6 @@ const EditTrackModal: React.FC<ModalProps> = ({
     closeModal();
   };
   const handleCancel = () => {
-    form.resetFields();
     closeModal();
   };
   return (

@@ -31,7 +31,9 @@ export const getTrackFromDeezerTrackObject = ({
 
 /* ———— SPOTIFY UTILS ————— */
 
-const getSpotifyReleaseYear = (album: SpotifyApi.AlbumObjectSimplified) => {
+export const getSpotifyReleaseYear = (
+  album: SpotifyApi.AlbumObjectSimplified
+) => {
   const precision = album.release_date_precision;
   const date = album.release_date;
   if (precision === "year") {

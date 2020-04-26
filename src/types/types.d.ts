@@ -13,3 +13,5 @@ export interface Track {
   popularity?: number;
   audio: string;
 }
+
+export type TrackProvider = "deezer" | "spotify";

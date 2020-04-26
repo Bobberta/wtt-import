@@ -1,4 +1,4 @@
-import { Button, Steps, Upload } from "antd";
+import { Button, Steps, Upload, Space } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import Papa from "papaparse";
 import React, { useState } from "react";
@@ -61,50 +61,50 @@ const Dashboard: React.FC = () => {
   };
   return (
     <>
-      <div>
+      <Space direction="vertical" size="large">
         <Steps current={currentStep}>
           <Step title="Import CSV" />
           <Step title="Intégration des morceaux" />
           <Step title="Validation" />
         </Steps>
-      </div>
-      <div>
-        {currentStep === 0 && (
-          <div>
+        <div>
+          {currentStep === 0 && (
             <div>
-              {csvLines.length <= 0 && (
-                <Upload.Dragger
-                  accept=".csv"
-                  beforeUpload={onFileUpload}
-                  name="file"
-                  multiple={false}
-                  showUploadList={false}
-                >
-                  <InboxOutlined />
-                  <p>Glisser-déposer un fichier CSV pour commencer</p>
-                </Upload.Dragger>
-              )}
-              {isParsing && "Loading..."}
-              {csvLines.length > 0 && (
-                <Button type="primary" onClick={startIntegration}>
-                  Commencer l'intégration
-                </Button>
-              )}
+              <div>
+                {csvLines.length <= 0 && (
+                  <Upload.Dragger
+                    accept=".csv"
+                    beforeUpload={onFileUpload}
+                    name="file"
+                    multiple={false}
+                    showUploadList={false}
+                  >
+                    <InboxOutlined />
+                    <p>Glisser-déposer un fichier CSV pour commencer</p>
+                  </Upload.Dragger>
+                )}
+                {isParsing && "Loading..."}
+                {csvLines.length > 0 && (
+                  <Button type="primary" onClick={startIntegration}>
+                    Commencer l'intégration
+                  </Button>
+                )}
+              </div>
             </div>
-          </div>
-        )}
-        {currentStep === 1 && (
-          <TrackStep
-            lineAmount={csvLines.length}
-            index={currentLine}
-            goToNextLine={goToNextLine}
-            goToPreviousLine={goToPreviousLine}
-            isLastLine={currentLine === csvLines.length - 1}
-            endIntegration={endIntegration}
-          />
-        )}
-        {currentStep === 2 && <p>Bravo! L'intégration est terminée.</p>}
-      </div>
+          )}
+          {currentStep === 1 && (
+            <TrackStep
+              lineAmount={csvLines.length}
+              index={currentLine}
+              goToNextLine={goToNextLine}
+              goToPreviousLine={goToPreviousLine}
+              isLastLine={currentLine === csvLines.length - 1}
+              endIntegration={endIntegration}
+            />
+          )}
+          {currentStep === 2 && <p>Bravo! L'intégration est terminée.</p>}
+        </div>
+      </Space>
     </>
   );
 };

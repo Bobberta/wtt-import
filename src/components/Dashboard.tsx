@@ -5,28 +5,20 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import TrackStep from "./TrackStep";
-import { Line, Track } from "../types/types";
+import { Line } from "../types/types";
 import { RootState } from "../store/reducers";
+import { setCsvLines, setCurrentStep, cancelImport } from "../store/actions";
+import ValidationStep from "./ValidationStep";
+import ExportStep from "./ExportStep";
 
 const { Step } = Steps;
 
 const Dashboard: React.FC = () => {
   const dispatch = useDispatch();
-  // const [csvLines, setCsvLines] = useState<Line[]>([]);
   const csvLines = useSelector((state: RootState) => state.csvLines);
-  const setCsvLines = (newLines: Line[]) => {
-    dispatch({ type: "SET_CSV_LINES", newLines });
-  };
-  //const tracks = useSelector((state:RootState) => state.tracks);
-  const [currentStep, setCurrentStep] = useState<number>(0);
-  const [currentLine, setCurrentLine] = useState<number>(0);
+  const currentLine = useSelector((state: RootState) => state.currentLine);
+  const currentStep = useSelector((state: RootState) => state.currentStep);
   const [isParsing, setIsParsing] = useState(false);
-  const goToNextLine = () => {
-    setCurrentLine(currentLine + 1);
-  };
-  const goToPreviousLine = () => {
-    setCurrentLine(currentLine - 1);
-  };
   const onFileUpload = (file: File) => {
     if (file.type !== "text/csv") {
       return false;
@@ -45,7 +37,7 @@ const Dashboard: React.FC = () => {
         const lines: Line[] = results.data.map((line: any) => {
           return { artist: line[1], title: line[2] };
         });
-        setCsvLines(lines);
+        dispatch(setCsvLines(lines));
         setIsParsing(false);
       },
     };
@@ -53,11 +45,10 @@ const Dashboard: React.FC = () => {
     return false;
   };
   const startIntegration = () => {
-    setCurrentStep(1);
+    dispatch(setCurrentStep(1));
   };
   const endIntegration = () => {
-    console.log("it's the end!");
-    setCurrentStep(2);
+    dispatch(setCurrentStep(2));
   };
   return (
     <>
@@ -66,7 +57,11 @@ const Dashboard: React.FC = () => {
           <Step title="Import CSV" />
           <Step title="Intégration des morceaux" />
           <Step title="Validation" />
+          <Step title="Export" />
         </Steps>
+        <Button onClick={() => dispatch(cancelImport())}>
+          Annuler l'import
+        </Button>
         <div>
           {currentStep === 0 && (
             <div>
@@ -96,13 +91,12 @@ const Dashboard: React.FC = () => {
             <TrackStep
               lineAmount={csvLines.length}
               index={currentLine}
-              goToNextLine={goToNextLine}
-              goToPreviousLine={goToPreviousLine}
               isLastLine={currentLine === csvLines.length - 1}
               endIntegration={endIntegration}
             />
           )}
-          {currentStep === 2 && <p>Bravo! L'intégration est terminée.</p>}
+          {currentStep === 2 && <ValidationStep />}
+          {currentStep === 3 && <ExportStep />}
         </div>
       </Space>
     </>

@@ -1,5 +1,15 @@
 import { createStore, compose } from "redux";
-import { tracksReducer } from "./reducers";
+import { tracksReducer, RootState } from "./reducers";
+import { persistStore, persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
+import { PersistPartial } from "redux-persist/es/persistReducer";
+
+const persistConfig = {
+  key: "root",
+  storage,
+};
+
+const persistedReducer = persistReducer(persistConfig, tracksReducer);
 
 declare global {
   interface Window {
@@ -9,6 +19,11 @@ declare global {
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-let store = createStore(tracksReducer, composeEnhancers());
-
-export default store;
+export default () => {
+  let store = createStore<RootState & PersistPartial, any, any, any>(
+    persistedReducer,
+    composeEnhancers()
+  );
+  let persistor = persistStore(store);
+  return { store, persistor };
+};

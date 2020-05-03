@@ -1,4 +1,4 @@
-import { Button, Descriptions, Row, Col, message, Space } from "antd";
+import { Button, Row, Col, Space, List } from "antd";
 import { SpotifyApi } from "../types/spotify";
 import { DeezerApi } from "../types/deezer";
 import React, { useEffect, useState } from "react";
@@ -11,24 +11,21 @@ import { dzSearchTrack } from "../api/deezer";
 import {
   getTrackFromDeezerTrackObject,
   getTrackFromSpotifyTrackObject,
-  convertArtistsArrayToString,
 } from "../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../types/store";
 import { DeezerTrackListItem, SpotifyTrackListItem } from "./TrackListItem";
+import { setCurrentLine } from "../store/actions";
+import SelectedTrackCard from "./SelectedTrackCard";
 
 interface TrackStepProps {
   lineAmount: number;
-  goToPreviousLine: () => void;
-  goToNextLine: () => void;
   index: number;
   isLastLine: boolean;
   endIntegration: () => void;
 }
 
 const TrackStep: React.FC<TrackStepProps> = ({
-  goToNextLine,
-  goToPreviousLine,
   index,
   isLastLine,
   endIntegration,
@@ -44,13 +41,11 @@ const TrackStep: React.FC<TrackStepProps> = ({
   >([]);
   const [deezerTracks, setDeezerTracks] = useState([]);
   const [previewUrl, play] = useState<string | null | undefined>();
-  const [selectedTrack, setSelectedTrack] = useState<
-    Track | null | undefined
-  >();
+  const [selectedTrack, setSelectedTrack] = useState<Track | undefined>();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    setSelectedTrack(null);
+    setSelectedTrack(undefined);
     setSpotifyTracks([]);
     setDeezerTracks([]);
     const search = async () => {
@@ -69,30 +64,18 @@ const TrackStep: React.FC<TrackStepProps> = ({
   };
 
   const selectDeezerTrack = (track: DeezerApi.TrackObject) => {
-    console.log(track);
     const trackObject = getTrackFromDeezerTrackObject(track);
     setSelectedTrack(trackObject);
   };
 
-  const handleEditSelectedTrack = (track: Track) => {
+  const handleEditSelectedTrack = () => {
     setIsModalOpen(true);
   };
-
-  const handleAddTrack = (track: Track) => {
-    if (!track.title) {
-      message.error("Titre manquant");
-      return;
-    }
-    if (!track.artist) {
-      message.error("Artiste manquant");
-      return;
-    }
-    if (!track.year) {
-      message.error("Année de sortie manquante");
-      return;
-    }
-    dispatch({ type: "ADD_TRACK", track });
-    goToNextLine();
+  const goToNextLine = () => {
+    dispatch(setCurrentLine(index + 1));
+  };
+  const goToPreviousLine = () => {
+    dispatch(setCurrentLine(index - 1));
   };
 
   return (
@@ -119,59 +102,41 @@ const TrackStep: React.FC<TrackStepProps> = ({
         </Col>
       </Row>
 
-      {selectedTrack && (
-        <>
-          <Descriptions title="Morceau sélectionné">
-            <Descriptions.Item label="Titre">
-              {selectedTrack.title}
-            </Descriptions.Item>
-            <Descriptions.Item label="Artiste(s)">
-              {selectedTrack.artist}
-            </Descriptions.Item>
-            <Descriptions.Item label="Année de sortie">
-              {selectedTrack.year || "?"}
-            </Descriptions.Item>
-          </Descriptions>
-          <Button onClick={() => handleEditSelectedTrack(selectedTrack)}>
-            Modifier
-          </Button>
-          <Button
-            type="primary"
-            onClick={() => {
-              handleAddTrack(selectedTrack);
-            }}
-          >
-            Ajouter à la playlist
-          </Button>
-        </>
-      )}
+      <SelectedTrackCard
+        selectedTrack={selectedTrack}
+        handleEdit={handleEditSelectedTrack}
+        goToNextLine={goToNextLine}
+      />
       <Row gutter={24}>
         <Col span={12}>
           <h3>Spotify Tracks</h3>
-          {spotifyTracks.map((track: SpotifyApi.TrackObjectFull, index) => {
-            return (
-              <SpotifyTrackListItem
-                track={track}
-                key={index}
-                play={play}
-                selectTrack={selectSpotifyTrack}
-              />
-            );
-          })}
+          <List
+            dataSource={spotifyTracks}
+            renderItem={(track: SpotifyApi.TrackObjectFull) => {
+              return (
+                <SpotifyTrackListItem
+                  track={track}
+                  play={play}
+                  selectTrack={selectSpotifyTrack}
+                />
+              );
+            }}
+          />
         </Col>
         <Col span={12}>
           <h3>Deezer Tracks</h3>
-
-          {deezerTracks.map((track: DeezerApi.TrackObject, index) => {
-            return (
-              <DeezerTrackListItem
-                track={track}
-                key={index}
-                play={play}
-                selectTrack={selectDeezerTrack}
-              />
-            );
-          })}
+          <List
+            dataSource={deezerTracks}
+            renderItem={(track: DeezerApi.TrackObject) => {
+              return (
+                <DeezerTrackListItem
+                  track={track}
+                  play={play}
+                  selectTrack={selectDeezerTrack}
+                />
+              );
+            }}
+          />
         </Col>
       </Row>
       {selectedTrack && (

@@ -5,11 +5,11 @@ export declare namespace DeezerApi {
     id: number;
     title: string;
     link: Url;
-    cover: Url;
-    cover_small: Url;
-    cover_medium: Url;
-    cover_big: Url;
-    cover_xl: Url;
+    cover: string;
+    cover_small: string;
+    cover_medium: string;
+    cover_big: string;
+    cover_xl: string;
     release_date: string;
     tracklist: Url;
     type: string;

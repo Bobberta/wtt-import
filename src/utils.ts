@@ -1,3 +1,5 @@
+import { v4 as uuid } from "uuid";
+
 import { SpotifyApi } from "./types/spotify";
 import { Track } from "./types/types";
 import { DeezerApi } from "./types/deezer";
@@ -16,6 +18,7 @@ export const getTrackFromDeezerTrackObject = ({
   artist,
   isrc,
   release_date,
+  album,
 }: DeezerApi.TrackObject) => {
   const track: Track = {
     audio: preview,
@@ -24,8 +27,10 @@ export const getTrackFromDeezerTrackObject = ({
     isrc,
     year: release_date ? parseInt(release_date, 10) : undefined,
     title,
+    coverImage: album.cover_small,
+    provider: "deezer",
+    id: uuid(),
   };
-  console.log(release_date);
   return track;
 };
 
@@ -60,6 +65,9 @@ export const getTrackFromSpotifyTrackObject = ({
       spotifyId: id,
       popularity,
       year: getSpotifyReleaseYear(album),
+      coverImage: album.images[0].url,
+      provider: "spotify",
+      id: uuid(),
     };
     return track;
   }

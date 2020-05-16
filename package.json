@@ -8,17 +8,17 @@
     "@types/node": "^12.0.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "node-fetch": "^2.6.0"
-  },
-  "devDependencies": {
-    "nodemon": "^1.17.4",
+    "node-fetch": "^2.6.0",
     "ts-node": "^6.0.3",
-    "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "~3.7.2"
   },
+  "devDependencies": {
+    "ts-node-dev": "^1.0.0-pre.44"
+  },
   "scripts": {
-    "start": "ts-node-dev ./index.ts",
-    "dev": "nodemon -x ts-node ./index.ts",
+    "start": "ts-node ./index.ts",
+    "dev": "ts-node-dev ./index.ts",
+    "deploy": "git push heroku master",
     "heroku-postbuild": "tsc & cd client/ && yarn && yarn build"
   }
 }
